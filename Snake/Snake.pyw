@@ -13,7 +13,8 @@ on=(60,65,44)
 x, y = 320, 240
 xmove, ymove = 0, 0
 xfood, yfood = 0, 0
-xfcords, yfcords = [*range(15,625,20)], [*range(15,465,20)]
+xfcords, yfcords = [*range(20,630,20)], [*range(20,470,20)]
+points = 0
 
 pygame.display.set_caption('Pyton')
 
@@ -47,19 +48,19 @@ while running:
 		
 	x += xmove
 	y += ymove
-	print(x, y, xfood, yfood)
+	print(x, y, xfood, yfood, points)
 	display.fill(on)
 	pygame.draw.rect(display,off,[10,10,width-20,height-20])	# ramka
 	pygame.draw.rect(display,on,[x-10,y-10,20,20])				# glowa
-	#for i in xfcords:
-	#	for j in yfcords:
-	#		pygame.draw.rect(display,on,[i,j,10,10])		# jedzenie
-	pygame.draw.rect(display,on,[xfood,yfood,10,10])
-
+	pygame.draw.rect(display,on,[xfood-5,yfood-5,10,10])
 
 	pygame.display.update()
 
 	clock.tick(2)
+
+	if x == xfood and y == yfood:
+		points += 1
+		genfood()
 
 	if x <= 0 or x > width or y <= 0 or y > height:
 		running = False
