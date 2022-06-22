@@ -1,10 +1,12 @@
 import pygame, os
 
-OFF = (168,198,78)
-ON = (60,65,44)
+OFF = (168,198,78)	# monochromatic color schme
+ON = (60,65,44)		# can be changed but couldn't figure out how to change graphics color
 
-RESOLUTION = WIDTH, HEIGHT = 640, 480
+RESOLUTION = WIDTH, HEIGHT = 640, 480	# might try adding custom resolutions but grid system isnt prepared
 
+
+# initializing game files and pygame
 Snake = os.path.abspath('Assets\\Snake')
 Pickups = os.path.abspath('Assets\\Pickups')
 files = os.listdir(Snake)
@@ -26,6 +28,7 @@ pygame.display.set_icon(icon)
 pygame.display.set_caption('PySnake')
 clock = pygame.time.Clock()
 
+# font loading is really inefficient and it's better to do it once rather than every time when creating a text object
 font1 = pygame.font.Font(os.path.abspath('Assets\\GUI\\Pixellari.ttf'), 14)
 font2 = pygame.font.Font(os.path.abspath('Assets\\GUI\\Pixellari.ttf'), 22)
 font3 = pygame.font.Font(os.path.abspath('Assets\\GUI\\Pixellari.ttf'), 34)
@@ -52,11 +55,11 @@ class Button(Text):
 	def draw(self, surface, hover=None):
 		if hover:
 			btn = pygame.image.load(os.path.abspath('Assets\\GUI\\buttonclick.png'))
-			display.blit(btn,(self.pos_x,self.pos_y))
+			surface.blit(btn,(self.pos_x,self.pos_y))
 			super().draw(surface, ON)
 		else:
 			btn = pygame.image.load(os.path.abspath('Assets\\GUI\\button.png'))
-			display.blit(btn,(self.pos_x,self.pos_y))
+			surface.blit(btn,(self.pos_x,self.pos_y))
 			super().draw(surface, OFF)
 
 	def collidepoint(self, mouse_pos_x, mouse_pos_y):
@@ -75,11 +78,11 @@ class Option(Text):
 	def draw(self, surface, selected=False):
 		if selected:
 			btn = pygame.image.load(os.path.abspath('Assets\\GUI\\settingchecked.png'))
-			display.blit(btn,(self.pos_x,self.pos_y))
+			surface.blit(btn,(self.pos_x,self.pos_y))
 			super().draw(surface, OFF)
 		else:
 			btn = pygame.image.load(os.path.abspath('Assets\\GUI\\setting.png'))
-			display.blit(btn,(self.pos_x,self.pos_y))
+			surface.blit(btn,(self.pos_x,self.pos_y))
 			super().draw(surface, ON)
 
 	def collidepoint(self, mouse_pos_x, mouse_pos_y):
@@ -112,10 +115,10 @@ class Checkbox():
 	def draw(self, surface, checked=False):
 		if checked:
 			btn = pygame.image.load(os.path.abspath('Assets\\GUI\\boxchecked.png'))
-			display.blit(btn,(self.pos_x,self.pos_y))
+			surface.blit(btn,(self.pos_x,self.pos_y))
 		else:
 			btn = pygame.image.load(os.path.abspath('Assets\\GUI\\box.png'))
-			display.blit(btn,(self.pos_x,self.pos_y))
+			surface.blit(btn,(self.pos_x,self.pos_y))
 
 	def collidepoint(self, mouse_pos_x, mouse_pos_y):
 		if mouse_pos_x >= self.pos_x and \

@@ -1,11 +1,9 @@
-from msilib.schema import CheckBox
 import pygame, os, Special
 import Core as c
 from sys import exit
-from random import randint
-from Core import 	ON, OFF, RESOLUTION, WIDTH, HEIGHT, \
+from Core import 	ON, OFF, WIDTH, HEIGHT, \
 					Text, Button, display, clock, \
-					font1, font2, font3, font4,\
+					font1, font2, font3,\
 					Checkbox, Option
 from Player import Snake
 from Food import Food
@@ -19,28 +17,28 @@ drop_option = False
 border_option = False
 
 def game(mode):
-	if mode == 3:
+	if mode == 3:	# options for custom gameplay settings
 		global tickrate_option, chance_option, duration_option, drop_option, border_option	
 
 		match tickrate_option:
 			case 1:
 				Special.changetickrate(2)
 			case 2:
-				pass
+				pass	# default option
 			case 3:
 				Special.changetickrate(7)
 		match chance_option:
 			case 1:
 				Special.changechance(2)
 			case 2:
-				pass
+				pass	# default option
 			case 3:
 				Special.changechance(25)
 		match duration_option:
 			case 1:
 				Special.changelast(25)
 			case 2:
-				pass
+				pass	# default option
 			case 3:
 				Special.changelast(55)
 
@@ -71,7 +69,7 @@ def game(mode):
 		player.update()	
 		food.update()
 					
-		if border_option:	
+		if border_option:	# teleport implementation needs to be between update and draw
 			if player.getx() <= 0 or player.getx() >= WIDTH or player.gety() <= 0 or player.gety() >= HEIGHT:
 				if player.getx() <= 0:
 					player.setx(WIDTH-20)
@@ -83,17 +81,17 @@ def game(mode):
 					player.sety(20)
 
 		display.fill(ON)
-	
 		pygame.draw.rect(display,OFF,[10,10,WIDTH-20,HEIGHT-20])
+
 		player.draw()
 		food.draw()		
 		if mode == 2 or (mode == 3 and drop_option):
-			if Special.run(player) == False: break
+			if Special.run(player) == False: break	# when pickups mode or selected in custom, this function handles special pickups
 		
 		pygame.display.update()
 		clock.tick(Special.TICKRATE)
 
-def splash():
+def splash(): # splash screen
 	running = True
 	while running:
 
@@ -127,7 +125,7 @@ def splash():
 		pygame.display.update()
 		clock.tick(60)
 
-def menu():
+def menu():	# main menu
 	running = True
 	while running:
 
@@ -140,6 +138,9 @@ def menu():
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE:
 					running = False
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_RETURN:
+					select()
 			if event.type == pygame.MOUSEBUTTONDOWN:
 				if event.button == 1:
 					pygame.mixer.music.load(os.path.abspath('Assets\\Sounds\\click.wav'))
@@ -147,7 +148,6 @@ def menu():
 					click = True
 			
 		display.fill(ON)
-	
 		pygame.draw.rect(display,OFF,[10,10,WIDTH-20,HEIGHT-20])
 
 		logo = pygame.image.load(os.path.abspath('Assets\\GUI\\logo.png'))
@@ -158,31 +158,23 @@ def menu():
 		play = Button("Start game", 320, 260)
 		if play.collidepoint(mx,my):
 			play.draw(display, 'hovered')
-			if click:
-				play.draw(display)
-				select()
-		else:
-			play.draw(display)
+			if click: select()
+		else:play.draw(display)
 
 		play = Button("Custom", 320, 330)
 		if play.collidepoint(mx,my):
 			play.draw(display, 'hovered')
-			if click:
-				play.draw(display)
-				custom()
-		else:
-			play.draw(display)
+			if click: custom()
+		else: play.draw(display)
 
 		play = Button("Exit", 320, 400)
 		if play.collidepoint(mx,my):
 			play.draw(display, 'hovered')
 			if click:
-				play.draw(display)
 				running=False
 				pygame.quit()
 				exit()
-		else:
-			play.draw(display)
+		else: play.draw(display)
 
 		Credit = Text("Made for an university project. Seweryn Marcinowski 2022", 197, 460, font1)
 		Credit.draw(display, ON)
@@ -190,7 +182,7 @@ def menu():
 		pygame.display.update()
 		clock.tick(60)
 
-def select():
+def select():	# gamemode choice
 	running = True
 	while running:
 		click = False
@@ -218,39 +210,32 @@ def select():
 			play.draw(display, 'hovered')
 			Desc = Text("Classic Snake gameplay, no surprises!", 320, 80, font2)
 			Desc.draw(display, ON)
-			if click:
-				play.draw(display)
-				game(1)
-		else:
-			play.draw(display)
+			if click: game(1)
+		else: play.draw(display)
 
 		play = Button("Pick-ups", 320, 240)
 		if play.collidepoint(mx,my):
 			play.draw(display, 'hovered')
 			Desc = Text("This fun mode adds power-ups and debuffs", 320, 80, font2)
 			Desc.draw(display, ON)
-			if click:
-				play.draw(display)
-				game(2)
-		else:
-			play.draw(display)
+			if click: game(2)
+		else: play.draw(display)
 
 		play = Button("Back", 320, 310)
 		if play.collidepoint(mx,my):
 			play.draw(display, 'hovered')
 			Desc = Text("Main menu", 320, 80, font2)
 			Desc.draw(display, ON)
-			if click:
-				play.draw(display)
-				running=False
-		else:
-			play.draw(display)
+			if click: running=False
+		else: play.draw(display)
 
 		Credit = Text("Made for an university project. Seweryn Marcinowski 2022", 197, 460, font1)
 		Credit.draw(display, ON)
 
 		pygame.display.update()
 		clock.tick(60)
+
+# --------------------------------------------------------------------------------------------
 
 # def setting(Name, Descripiton, mx, my, click, option):	Might try this later
 # 	global option
@@ -292,6 +277,8 @@ def select():
 # 		if click:
 # 			option = 3
 
+# -------------------------------custom menu and game init-------------------------------------
+
 def custom():	# This is really dirty and i prolly will revise this in the future
 	running = True
 
@@ -317,6 +304,8 @@ def custom():	# This is really dirty and i prolly will revise this in the future
 		pygame.draw.rect(display,OFF,[10,10,WIDTH-20,HEIGHT-20])
 
 		mx, my = pygame.mouse.get_pos()
+
+		# -------------- checkboxes -----------------
 
 		pickups = Checkbox(40,90)
 		Desc = Text("Turn on special pickups", 320, 255, font2)
@@ -351,6 +340,8 @@ def custom():	# This is really dirty and i prolly will revise this in the future
 
 		Desc = Text("Teleport", 420, 90, font2)
 		Desc.draw(display,ON)
+
+		# -------------- option 1 -----------------
 
 		Desc = Text("Change the base speed of the snake", 320, 255, font2)
 		tickrate = Option("Speed",90,40)
@@ -389,6 +380,8 @@ def custom():	# This is really dirty and i prolly will revise this in the future
 			Desc.draw(display, ON)
 			if click:
 				tickrate_option = 3
+
+		# -------------- pick-ups opitons -----------------
 
 		if drop_option:
 			Desc = Text("Change how often do pick-ups spawn", 320, 255, font2)
@@ -467,24 +460,20 @@ def custom():	# This is really dirty and i prolly will revise this in the future
 				if click:
 					duration_option = 3
 
+		# -------------- footer -----------------
+
 		play = Button("Start", 320, 330)
 		if play.collidepoint(mx,my):
 			play.draw(display, 'hovered')
 			Desc = Text("This fun mode adds power-ups and debuffs", 320, 80, font2)
-			if click:
-				play.draw(display)
-				game(3)
-		else:
-			play.draw(display)
+			if click: game(3)
+		else: play.draw(display)
 
 		play = Button("Back", 320, 400)
 		if play.collidepoint(mx,my):
 			play.draw(display, 'hovered')
-			if click:
-				play.draw(display)
-				running=False
-		else:
-			play.draw(display)
+			if click: running=False
+		else: play.draw(display)
 
 		Credit = Text("Made for an university project. Seweryn Marcinowski 2022", 197, 460, font1)
 		Credit.draw(display, ON)
@@ -492,9 +481,9 @@ def custom():	# This is really dirty and i prolly will revise this in the future
 		pygame.display.update()
 		clock.tick(60)
 
+# -----------------------------------------------------------------------------------------------------
+
 splash()
 menu()
-
 pygame.quit()
 exit()
-
