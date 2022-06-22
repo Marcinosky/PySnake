@@ -1,6 +1,8 @@
-import pygame
-from Core import WIDTH, HEIGHT, display, setting
+import pygame, os
+from Core import WIDTH, HEIGHT, display, font4, font2, ON, OFF
 import Core as c
+import Special as s
+from importlib import reload
 
 class Snake(pygame.sprite.Sprite):
 	def __init__(self, filename):
@@ -116,6 +118,11 @@ class Snake(pygame.sprite.Sprite):
 	def gety(self):
 		return self.y
 
+	def setx(self, value):
+		self.x = value
+	def sety(self, value):
+		self.y = value
+
 	def getmovex(self):
 		return self.xmove
 	def getmovey(self):
@@ -146,21 +153,71 @@ class Snake(pygame.sprite.Sprite):
 		self.x += self.xmove
 		self.y += self.ymove
 
-	def running(self):
+	def running(self, setting=False):
 		for segment in self.snake[:-1]:
 			if self.points > 1 and self.x == segment[0] and self.y == segment[1]:
-				return  False
+				return self.gameover()
 		if self.x <= 0 or self.x >= WIDTH or self.y <= 0 or self.y >= HEIGHT:
 			if setting:
-				if self.x <= 0:
-					self.x = WIDTH-20
-				elif self.x >= WIDTH:
-					self.x = 20
-				elif self.y <= 0:
-					self.y = HEIGHT-20
-				elif self.y >= HEIGHT:
-					self.y = 20
 				return True		# tp setting removes border kill zone
 			else:
-				return  False
+				return self.gameover()
 		return True				# if not oob, and not on snake - continue
+
+	def gameover(self):
+		pygame.mixer.music.load(os.path.abspath('Assets\\Sounds\\gameover.wav'))
+		pygame.mixer.music.play(1)	
+		reload(s)
+		running = True
+		while running:
+
+			click = False
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					running = False
+					pygame.quit()
+					exit()
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_ESCAPE:
+						running = False
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					if event.button == 1:
+						pygame.mixer.music.load(os.path.abspath('Assets\\Sounds\\click.wav'))
+						pygame.mixer.music.play(1)
+						click = True
+
+			pygame.draw.rect(display,ON,[WIDTH/2-250,HEIGHT/2-150, 500, 300])
+			pygame.draw.rect(display,OFF,[WIDTH/2-240,HEIGHT/2-140, 480, 280])
+			mx, my = pygame.mouse.get_pos()
+			prompt = c.Text("GAME OVER", WIDTH/2, 160, font4)
+			score = c.Text(f"Your score: {self.points}", WIDTH/2, 200, font2)
+			
+			prompt.draw(display, ON)
+			score.draw(display, ON)
+
+			play = c.Button("retry", WIDTH/2, HEIGHT/2+30)
+			if play.collidepoint(mx,my):
+				play.draw(display, 'hovered')
+				if click:
+					self.x = int(WIDTH/2)
+					self.y = int(HEIGHT/2)
+					self.xmove = 0
+					self.ymove = 0
+					self.snake = []
+					self.points = 1
+					return True
+			else:
+				play.draw(display)
+			
+			play = c.Button("main menu", WIDTH/2, HEIGHT/2+100)
+			if play.collidepoint(mx,my):
+				play.draw(display, 'hovered')
+				if click:
+					play.draw(display)
+					running=False
+			else:
+				play.draw(display)
+
+			pygame.display.update()
+			c.clock.tick(60)
+		return False

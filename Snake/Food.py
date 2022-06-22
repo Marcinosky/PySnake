@@ -1,4 +1,4 @@
-import pygame
+import pygame, os
 from Core import WIDTH, HEIGHT, display
 import Core as c
 from random import randint
@@ -25,6 +25,8 @@ class Food(pygame.sprite.Sprite):
 
 	def update(self):
 		if self.player.getx() == self.xfood and self.player.gety() == self.yfood:
+			pygame.mixer.music.load(os.path.abspath('Assets\\Sounds\\eat.wav'))
+			pygame.mixer.music.play(1)
 			self.player.point()
 			self.genfood()
 

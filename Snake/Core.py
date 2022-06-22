@@ -12,50 +12,12 @@ files = os.listdir(Snake)
 for file_name in files:
     image_name = file_name[:-4].upper()
     globals()[image_name] = pygame.image.load(os.path.join(Snake, file_name))
-    print(Pickups)
-
-SNAKE_LIST = [  HEAD_D,
-                HEAD_L,
-                HEAD_R,
-                HEAD_U,
-                HEAD_D_OPEN,
-                HEAD_L_OPEN,
-                HEAD_R_OPEN,
-                HEAD_U_OPEN,
-                SEGMENT_DL,
-                SEGMENT_DR,
-                SEGMENT_H,
-                SEGMENT_UL,
-                SEGMENT_UR,
-                SEGMENT_V,
-                START_D,
-                START_L,
-                START_R,
-                START_U,
-                START_D_OPEN,
-                START_L_OPEN,
-                START_R_OPEN,
-                START_U_OPEN,
-                TAIL_D,
-                TAIL_L,
-                TAIL_R,
-                TAIL_U ]
 
 files = os.listdir(Pickups)
 
 for file_name in files:
     image_name = file_name[:-4].upper()
     globals()[image_name] = pygame.image.load(os.path.join(Pickups, file_name))
-    print(image_name)
-
-PICKUP_LIST = [ MINUS1,
-                NORMAL,
-                PLUS3,
-                SLOW,
-                SPEED,
-                TIMES3,
-                BLANK,
-                DIVIDE ]
 
 pygame.init()
 display = pygame.display.set_mode(RESOLUTION)
@@ -68,8 +30,6 @@ font1 = pygame.font.Font(os.path.abspath('Assets\\GUI\\Pixellari.ttf'), 14)
 font2 = pygame.font.Font(os.path.abspath('Assets\\GUI\\Pixellari.ttf'), 22)
 font3 = pygame.font.Font(os.path.abspath('Assets\\GUI\\Pixellari.ttf'), 34)
 font4 = pygame.font.Font(os.path.abspath('Assets\\GUI\\Pixellari.ttf'), 64)
-
-setting = None # border setting
 
 class Text:
     def __init__(self, text, pos_x_center, pos_y_center, font):
@@ -104,4 +64,62 @@ class Button(Text):
 			mouse_pos_x < self.pos_x + 120 and \
 			mouse_pos_y >= self.pos_y and \
 			mouse_pos_y < self.pos_y + 60:
+			return True
+
+class Option(Text):
+	def __init__(self, text, pos_x_center, pos_y_center):
+		super().__init__(text, pos_x_center, pos_y_center, font2)
+		self.pos_x = pos_x_center - 70
+		self.pos_y = pos_y_center - 20
+
+	def draw(self, surface, selected=False):
+		if selected:
+			btn = pygame.image.load(os.path.abspath('Assets\\GUI\\settingchecked.png'))
+			display.blit(btn,(self.pos_x,self.pos_y))
+			super().draw(surface, OFF)
+		else:
+			btn = pygame.image.load(os.path.abspath('Assets\\GUI\\setting.png'))
+			display.blit(btn,(self.pos_x,self.pos_y))
+			super().draw(surface, ON)
+
+	def collidepoint(self, mouse_pos_x, mouse_pos_y):
+		if mouse_pos_x >= self.pos_x and \
+			mouse_pos_x < self.pos_x + 140 and \
+			mouse_pos_y >= self.pos_y and \
+			mouse_pos_y < self.pos_y + 40:
+			return True
+
+# class Setting(Option):		Might try this later
+# 	def __init__(self, text, pos_x_center, pos_y_center):
+# 		self.description = super().__init__(text, pos_x_center-295, pos_y_center)
+# 		self.choice1 = super().__init__("low", pos_x_center-145, pos_y_center)
+# 		self.choice2 = super().__init__("default", pos_x_center+5, pos_y_center)
+# 		self.choice3 = super().__init__("high", pos_x_center+155, pos_y_center)
+# 		self.pos_x = pos_x_center - 295
+# 		self.pos_y = pos_y_center - 20
+
+# 	def draw(self, surface):
+# 		self.description.draw(surface)
+# 		self.choice1.draw(surface)
+# 		self.choice2.draw(surface)
+# 		self.choice3.draw(surface)
+
+class Checkbox():
+	def __init__(self, pos_x_center, pos_y_center):
+		self.pos_x = pos_x_center - 20
+		self.pos_y = pos_y_center - 20
+
+	def draw(self, surface, checked=False):
+		if checked:
+			btn = pygame.image.load(os.path.abspath('Assets\\GUI\\boxchecked.png'))
+			display.blit(btn,(self.pos_x,self.pos_y))
+		else:
+			btn = pygame.image.load(os.path.abspath('Assets\\GUI\\box.png'))
+			display.blit(btn,(self.pos_x,self.pos_y))
+
+	def collidepoint(self, mouse_pos_x, mouse_pos_y):
+		if mouse_pos_x >= self.pos_x and \
+			mouse_pos_x < self.pos_x + 40 and \
+			mouse_pos_y >= self.pos_y and \
+			mouse_pos_y < self.pos_y + 40:
 			return True
